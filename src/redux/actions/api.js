@@ -1,50 +1,84 @@
-import {Alert} from 'react-native'
+import { Alert } from 'react-native'
 
-export const setLogin = login => ({
-    type: 'SET_LOGIN',
-    login,
-})
+export const defaultApiActionFire = (errorData) => {
+  //console.log(errorData)
+  return Alert.alert(
+    'Error!',
+    typeof errorData.message === "string" ? errorData.message : null,
+  )
+}
 
-export const setPassword = password => ({
-    type: 'SET_PASSWORD',
-    password
-})
+export const fetchApi = ({ data, params, callbacks = {} }) => {
+  const requestData = {
+    id: 0,
+    jsonrpc: '2.0',
+    ...data
+  }
+  return async (dispatch) => {
+    const result = await fetch(
+      params.url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `rpc=${JSON.stringify(requestData)}`
+      })
+      //обработка в понятный вид
+      .then(response => applyres({ response: response }))
+      .catch(err => {
+        console.log(`\n fetchApi fail \n ${err}\n`)
+        return { status: 0, response: null }
+      })
+    return fetchApiCallback({ result, callbacks, url: params.url, dispatch })
+  }
+}
 
-export const fetchApi = (apiData) => {
-    console.log(apiData)
-    const params = {
-        id: 0,
-        jsonrpc: '2.0',
-        ...apiData.data
+const fetchApiCallback = async ({ result, callbacks, url, dispatch }) => {
+  // console.log('fetchApiCallback')
+  // console.log(result)
+  // console.log(typeof result.response.error)
+
+  //!success custom
+  if (typeof result.response.error === "object") {
+    if (callbacks['fail']) {
+      return callbacks['fail'](result)
+    } else {
+      return defaultApiActionFire(result.response.error)
     }
-    console.log(params)
-    return async (dispatch) => {
-        try {
-            let response = await fetch(
-                apiData.params.url, 
-                {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `rpc=${JSON.stringify(params)}` 
-            })
-            console.log(`rpc=${JSON.stringify(params)}`)
-            console.log(response)
-            const jsonData = await response.json()
-            console.log(jsonData)
-            if(jsonData.error) {
-                return Alert.alert(
-                    jsonData.error.code.toString(),
-                    jsonData.error.message,
-                ) 
-            }
-        } catch (error) {
-            console.log(error.error)
-            return Alert.alert(
-                error.code,
-                error.message,
-            ) 
-        }
-    } 
+  }
+
+  if (callbacks[result.status]) {
+    return callbacks[result.status](result)
+  }
+
+}
+
+//преобразование response
+const applyres = async ({ response }) => {
+  //console.log('обработчик response')
+  //console.log(response)
+  let result = {}
+  let status = 0
+  if (response) {
+    status = response ? response.status : 0
+    try {
+      result = status === 200 && typeof response === 'object' ?
+        await response.json() : null
+    }
+    catch (e) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`\n api handler error get result:\n${e}\n`)
+      }
+      return {
+        status: 0,
+        response: null
+      }
+    }
+  }
+
+  return {
+    response: result,
+    status: status
+  }
 }

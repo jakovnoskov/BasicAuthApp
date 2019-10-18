@@ -58,7 +58,8 @@ export default StyleSheet.create({
         borderBottomWidth: 4,
         borderRadius: 4,
         borderColor: '#cd7638',
-        width:'100%'
+        width:'100%',
+        height:41
     },
     loginTitle: {
         fontWeight: 'bold',

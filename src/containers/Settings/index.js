@@ -1,26 +1,49 @@
 import React from 'react'
 import {
-    View,
-    FlatList,
     Text,
-    StyleSheet,
+    TouchableOpacity,
     SafeAreaView
 } from 'react-native'
 import styles from './styles'
+import { connect } from 'react-redux'
+import { userLogout } from '../../redux/actions/user'
 
 class Settings extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {}
+
+    logOut = async () => {
+        await this.props.userLogout()
+        await this.props.navigation.navigate('Auth')
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={styles.container}>Settings</Text>
-            </View>
+            <SafeAreaView style={styles.settingsContainer}>
+                <Text style={styles.testTaskTitle}>Test task by Jakov Noskov</Text>
+                <Text style={styles.appTitle}>{this.props.curentUser.Name}</Text>
+                <Text style={styles.appTitle}>{this.props.account}</Text>
+                <Text style={styles.appTitle}>{this.props.curentUser.Currency}</Text>
+
+                <TouchableOpacity
+                    style={styles.logOutButtonStyle}
+                    onPress={() => this.logOut()}
+                >
+                    <Text style={styles.logoutTitl1e}>Logout</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
         )
     }
 }
 
-export default Settings
+const mapStateToProps = state => {
+    console.log(state)
+    return {
+        curentUser: state.user.curentUser,
+        account: state.user.account,
+    }
+}
+
+const mapDispatchToProps = {
+    userLogout,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings)

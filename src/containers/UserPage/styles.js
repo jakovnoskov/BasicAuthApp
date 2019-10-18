@@ -3,8 +3,7 @@ import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#dadada',
-    marginTop: 30,
+    backgroundColor: '#fff',
   },
   itemText: {
     backgroundColor: '#fff',
@@ -48,16 +47,19 @@ export default StyleSheet.create({
     flexDirection: 'row',
   },
   nonsenseItem: {
+    backgroundColor: '#dadada',
+    padding:10,
+  },
+  nonsenseItemWrap:{
+    borderRadius: 3,
     backgroundColor: '#fff',
-    flexDirection: 'row',
-    textAlign: 'center',
-    margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 7,
     height: 70,
-    borderRadius: 3,
     overflow: 'hidden',
+    flexDirection: 'row',
+    textAlign: 'center',
   },
   itemTextdata: {
     color: '#d5bf91',
