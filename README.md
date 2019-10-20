@@ -4,7 +4,7 @@
 iOS
 In the root directory
 
-Install dependencies: npm install
+Install dependencies: <h4>npm install</h4>
 
 In the ios directory
-Install Pods: pod install
+Install Pods: <h4>pod install</h4>
