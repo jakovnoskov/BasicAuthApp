@@ -1,5 +1,5 @@
 # BasicAuthApp
- Test Task by Jakov Noskov
+ <h3>Test Task by Jakov Noskov</h3>
 
 iOS
 In the root directory
